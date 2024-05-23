@@ -13,7 +13,7 @@ const path = require("path");
 
 
 //! La funzione readJSONfile che hai scritto legge un file JSON dal file system e restituisce i suoi contenuti come un oggetto JavaScript
-const readJSONfile = (fileName) => {
+const readJSONData = (fileName) => {
 
     //determino il path del file
     const filePath = path.join(__dirname, fileName + '.json');
@@ -38,8 +38,32 @@ const writeJSONData = (fileName, newData) => {
 }
 
 //! Setto il server e lo creo 
-const server = http.createServer((request, result) => {
+const server = http.createServer((request, response) => {
 
+    // lettura del contenuto del file JSON
+    const chuck = readJSONData('norrisDB');
+
+    switch (request.url) {
+        case '/favicon.ico':
+            response.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
+            response.end();
+            break;
+        case '/':
+            // Il metodo writeHead è utilizzato in Node.js per impostare lo stato e gli header della risposta HTTP
+            response.writeHead(200, { "content-Type": "text/html; charset=utf-8" });
+
+            // chiamo l'api e prendo la risposta 
+            fetch('https://api.chucknorris.io/jokes/random')
+                .then(response => response.json())
+                .then(chuckPhrase => {
+                    console.log(chuckPhrase)
+                    let fileHtml = '<ul>';
+                    fileHtml += `<li>${chuckPhrase.value}</li>`;
+                    fileHtml += '</ul>';
+                    response.end(fileHtml);
+                })
+            break;
+    }
 })
 
 
