@@ -11,6 +11,19 @@ const fs = require("fs");
 // È particolarmente utile per gestire i percorsi in modo indipendente dal sistema operativo, poiché i separatori di percorso differiscono tra Windows (\) e Unix-like (/) sistemi.
 const path = require("path");
 
+// La funzione readJSONfile che hai scritto legge un file JSON dal file system e restituisce i suoi contenuti come un oggetto JavaScript
+const readJSONfile = (fileName) => {
+
+    //determino il path del file
+    const filePath = path.join(__dirname, fileName + '.json');
+    // console.log(filePath)
+
+    // leggo il contenuto del file
+    const fileData = fs.readFileSync(filePath, "utf-8");
+
+    return JSON.parse(fileData);
+}
+
 
 //Setto il server e lo creo 
 const server = http.createServer((request, result) => {
