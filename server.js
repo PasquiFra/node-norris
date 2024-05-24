@@ -40,6 +40,8 @@ const writeJSONData = (fileName, newData) => {
 //! Setto il server e lo creo 
 const server = http.createServer((request, response) => {
 
+    // lettura del contenuto del file JSON
+    const chuckPhrases = readJSONData('norrisDB');
 
     switch (request.url) {
         case '/favicon.ico':
@@ -49,24 +51,24 @@ const server = http.createServer((request, response) => {
 
         case '/':
 
+            // Il metodo writeHead è utilizzato in Node.js per impostare lo stato e gli header della risposta HTTP
             response.writeHead(200, { "content-Type": "text/html; charset=utf-8" });
-
-            // lettura del contenuto del file JSON
-            const chuckPhrases = readJSONData('norrisDB');
-
-            console.log(chuckPhrases)
 
             // chiamo l'api e prendo la risposta 
             fetch('https://api.chucknorris.io/jokes/random')
+                // Aspetto la risposta della chiamata
                 .then(response => response.json())
+                // 
                 .then(chuckJoke => {
 
+                    // se la frase da inserire è già stata generata non la includerò nel file 
                     if (!chuckPhrases.includes(chuckJoke.value)) {
                         writeJSONData('norrisDB', [...chuckPhrases, chuckJoke.value]);
                     }
 
                     let fileHtml = '<ul>';
 
+                    // stampo ogni frase in una lista
                     chuckPhrases.forEach(phrase => {
                         fileHtml += `<li> ${phrase} </li>`
                     });
@@ -74,7 +76,6 @@ const server = http.createServer((request, response) => {
                     fileHtml += '</ul>';
 
                     response.end(fileHtml);
-                    // Il metodo writeHead è utilizzato in Node.js per impostare lo stato e gli header della risposta HTTP
                 })
             break;
     }
